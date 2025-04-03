@@ -30,6 +30,13 @@ listContainer.addEventListener(
   false
 );
 
+// added enter key event listener
+inputBox.addEventListener("keydown", function (e) {
+  if (e.key == "Enter") {
+    addTask();
+  }
+});
+
 // ✅ FIX: Retrieving tasks correctly from localStorage
 function saveData() {
   localStorage.setItem("data", listContainer.innerHTML);
