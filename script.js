@@ -2,19 +2,42 @@ const inputBox = document.getElementById("input-box");
 const listContainer = document.getElementById("list-container");
 
 function addTask() {
-  if (inputBox.value === "") {
+  const taskText = inputBox.value.trim();
+
+  if (taskText === "") {
     alert("You must write something!!!");
-  } else {
-    let li = document.createElement("li");
-    li.innerHTML = inputBox.value;
-    listContainer.appendChild(li);
-    let span = document.createElement("span");
-    span.innerHTML = "\u00d7";
-    li.appendChild(span);
+    return;
   }
+
+  // ✅ Check if the task already exists
+  const tasks = Array.from(document.querySelectorAll("#list-container li"));
+  const isDuplicate = tasks.some(
+    (task) => task.textContent.replace("×", "").trim() === taskText
+  );
+
+  if (isDuplicate) {
+    alert("Task already exists!");
+    return;
+  }
+
+  let li = document.createElement("li");
+  li.innerHTML = taskText;
+  listContainer.appendChild(li);
+
+  let span = document.createElement("span");
+  span.innerHTML = "\u00d7"; // '×' close button
+  li.appendChild(span);
+
   inputBox.value = "";
   saveData();
 }
+
+// ✅ Listen for "Enter" key press
+inputBox.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    addTask();
+  }
+});
 
 listContainer.addEventListener(
   "click",
@@ -30,19 +53,11 @@ listContainer.addEventListener(
   false
 );
 
-// added enter key event listener
-inputBox.addEventListener("keydown", function (e) {
-  if (e.key == "Enter") {
-    addTask();
-  }
-});
-
-// ✅ FIX: Retrieving tasks correctly from localStorage
 function saveData() {
   localStorage.setItem("data", listContainer.innerHTML);
 }
 
 function showTask() {
-  listContainer.innerHTML = localStorage.getItem("data") || ""; // FIXED: Assigning the stored value
+  listContainer.innerHTML = localStorage.getItem("data") || "";
 }
 showTask();
